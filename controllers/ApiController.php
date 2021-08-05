@@ -11,9 +11,10 @@ class ApiController extends Controller
 {
     /**
      * The method saves the files from $_FILES array.
+     * Throws 400 error if $_FILES array is empty
      *
      * @return Response
-     * @throws HttpException Throws 400 error if $_FILES is empty
+     * @throws HttpException
      */
     public function actionLoadFiles(): Response
     {
