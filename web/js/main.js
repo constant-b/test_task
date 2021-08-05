@@ -66,7 +66,7 @@ $(document).on("change", "[name=files]", function (event) {
 
 function readURL(file) {
     let reader   = new FileReader(),
-        newPhoto = $(".for-clone .file-upload-content").clone().insertAfter(".image-upload-wrap");
+        newPhoto = $(".file-upload-template .file-upload-content").clone().insertAfter(".image-upload-wrap");
 
     reader.onload = function (e) {
         newPhoto.find(".file-upload-image").attr('src', allowed_preview_types.includes(file.type) ? e.target.result : "/images/preview.png");

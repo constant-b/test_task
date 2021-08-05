@@ -15,7 +15,7 @@ $this->title = 'File uploader';
                     <h3>Drag and drop or select a file</h3>
                 </div>
             </div>
-            <div class="for-clone" style="display: none">
+            <div class="file-upload-template" style="display: none">
                 <div class="file-upload-content">
                     <img class="file-upload-image" src="#" alt="your image"/>
                     <div class="image-title-wrap"></div>
