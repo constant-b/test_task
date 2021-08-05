@@ -12,7 +12,7 @@ $this->title = 'File uploader';
             <div class="image-upload-wrap">
                 <input class="file-upload-input" multiple type="file" name="files" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/vnd.ms-powerpoint, application/pdf, image/*">
                 <div class="drag-text">
-                    <h3>Drag and drop a file or select add Image</h3>
+                    <h3>Drag and drop or select a file</h3>
                 </div>
             </div>
             <div class="for-clone" style="display: none">
