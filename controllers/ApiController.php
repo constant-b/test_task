@@ -10,7 +10,10 @@ use app\models\SafeUploadedFile;
 class ApiController extends Controller
 {
     /**
-     * @throws HttpException
+     * The method saves the files from $_FILES array.
+     *
+     * @return Response
+     * @throws HttpException Throws 400 error if $_FILES is empty
      */
     public function actionLoadFiles(): Response
     {
