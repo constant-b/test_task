@@ -58,6 +58,10 @@ $(document).on("change", "[name=files]", function (event) {
     }
 
     $("#fileLoaderForm")[0].reset();
+}).on("click", ".file-upload-btn", function () {
+    $('.file-upload-input').trigger('click');
+}).on("click", ".remove-upload-file-preview", function () {
+    $(this).closest(".file-upload-content").remove();
 });
 
 function readURL(file) {
@@ -73,4 +77,6 @@ function readURL(file) {
 
     return newPhoto;
 }
+
+$(document)
 

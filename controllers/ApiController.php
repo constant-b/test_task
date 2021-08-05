@@ -22,7 +22,7 @@ class ApiController extends Controller
                 $file = SafeUploadedFile::getInstanceByName($key);
 
                 return $this->asJson([
-                    'success' => $file->save(false)
+                    'success' => $file->save()
                 ]);
             }
         }
