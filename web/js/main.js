@@ -6,11 +6,8 @@ $(document).on("change", "[name=files]", function (event) {
     let files_count = this.files.length,
         form_data   = new FormData();
 
-    console.log(this.files);
-
     for (let i = 0; i < files_count; i++) {
         form_data.append('file', this.files[i]);
-
         form_data.append('_csrf', __csrf);
 
         let progressBar     = readURL(this.files[i]),
