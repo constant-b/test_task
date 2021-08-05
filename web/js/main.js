@@ -48,7 +48,7 @@ $(document).on("change", "[name=files]", function (event) {
                     progressBarWrap.css({"background": "#843534"}).html("Can't load file!")
                 }
             },
-            error: function (data) {
+            error: function () {
                 progressBarWrap.css({"background": "#843534"}).html("Can't load file!")
             },
 
