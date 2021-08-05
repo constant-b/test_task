@@ -30,14 +30,13 @@ $(document).on("change", "[name=files]", function (event) {
 
                 return xhr;
             },
-            dataType: 'text',
+            dataType: 'json',
             cache: false,
             contentType: false,
             processData: false,
             data: form_data,
             type: 'post',
             success: function (data) {
-                data = JSON.parse(data);
 
                 if (data.success) {
                     progressBarWrap.css({"background": "#70b860"}).html("Done!");
