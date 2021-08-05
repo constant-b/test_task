@@ -1,25 +1,80 @@
 let __csrf = $("[name=csrf-token]").attr("content");
 
-$("[name=files]").on("change", function (event) {
+let allowed_preview_types = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+
+$(document).on("change", "[name=files]", function (event) {
     let files_count = this.files.length,
         form_data   = new FormData();
 
-    for (let i = 0; i <= files_count; i++) {
-        form_data.append('file' + i, this.files[i]);
+    console.log(this.files);
+
+    for (let i = 0; i < files_count; i++) {
+        form_data.append('file', this.files[i]);
+
+        form_data.append('_csrf', __csrf);
+
+        let progressBar     = readURL(this.files[i]),
+            progressBarWrap = progressBar.find(".custom-progress-bar");
+
+        $.ajax({
+            url: '/api/load-files',
+            xhr: function () {
+                let xhr = new window.XMLHttpRequest();
+
+                xhr.upload.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        let percentComplete = evt.loaded / evt.total;
+                        percentComplete     = percentComplete * 100;
+
+                        let progressBarInner = progressBarWrap.find(".inner");
+                        progressBarInner.css({"width": percentComplete + "%"});
+                    }
+                }, false);
+
+                return xhr;
+            },
+            dataType: 'text',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: form_data,
+            type: 'post',
+            success: function (data) {
+                data = JSON.parse(data);
+
+                if (data.success) {
+                    progressBarWrap.css({"background": "#70b860"}).html("Done!");
+
+                    setTimeout(function () {
+                        progressBarWrap.fadeOut(2000);
+                    })
+                } else {
+                    progressBarWrap.css({"background": "#843534"}).html("Can't load file!")
+                }
+            },
+            error: function (data) {
+                progressBarWrap.css({"background": "#843534"}).html("Can't load file!")
+            },
+
+        });
+
+        form_data.delete("file");
     }
 
-    form_data.append('_csrf', __csrf);
+    $("#fileLoaderForm")[0].reset();
+});
 
-    $.ajax({
-        url: '/api/load-files',
-        dataType: 'text',
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: form_data,
-        type: 'post',
-        success: function (data) {
+function readURL(file) {
+    let reader   = new FileReader(),
+        newPhoto = $(".for-clone .file-upload-content").clone().insertAfter(".image-upload-wrap");
 
-        }
-    });
-})
+    reader.onload = function (e) {
+        newPhoto.find(".file-upload-image").attr('src', allowed_preview_types.includes(file.type) ? e.target.result : "/images/preview.png");
+        newPhoto.find('.image-title-wrap').html(file.name);
+    };
+
+    reader.readAsDataURL(file);
+
+    return newPhoto;
+}
+

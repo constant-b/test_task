@@ -1,26 +1,30 @@
 <?php
 
-
 namespace app\controllers;
 
-
+use yii\web\Response;
+use yii\web\Controller;
+use yii\web\HttpException;
 use app\models\SafeUploadedFile;
 
-class ApiController extends \yii\web\Controller
+class ApiController extends Controller
 {
-    public function actionLoadFiles()
+    /**
+     * @throws HttpException
+     */
+    public function actionLoadFiles(): Response
     {
-        $success = true;
+        if (!empty($_FILES)) {
+            foreach ($_FILES as $key => $file) {
+                $file = SafeUploadedFile::getInstanceByName($key);
 
-        foreach ($_FILES as $key => $file) {
-            $file = SafeUploadedFile::getInstanceByName($key);
-
-            if (!$file->save()) $success = false;
+                return $this->asJson([
+                    'success' => $file->save(false)
+                ]);
+            }
         }
 
-        return $this->asJson([
-            'success' => $success
-        ]);
+        throw new HttpException(400);
     }
 
 }

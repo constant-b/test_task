@@ -5,46 +5,53 @@ namespace app\models;
 
 
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 class SafeUploadedFile extends UploadedFile
 {
     const ALLOWED_EXTENSIONS = ["pdf", "bmp", "jpeg", "jpg", "gif", "png", "doc", "docx", "pptx", "ppt", "xls", "xlsx"];
 
-    private $_tempResource;
 
     public function __construct($config = [])
     {
-        $this->_tempResource = ArrayHelper::getValue($config, 'tempResource');
-
         parent::__construct($config);
     }
 
-    private function checkExtension(): bool
+    private function isAllowedExtension(): bool
     {
         return in_array($this->getExtension(), self::ALLOWED_EXTENSIONS);
     }
 
-    public function save(): bool
+    public function save(bool $randomFileName = true): bool
     {
-        if ($this->hasError && $this->checkExtension()) {
+        if (!$this->isAllowedExtension() || $this->hasError) {
             return false;
         }
 
         $targetPath = Yii::getAlias("@app/web/uploads/" . date("Y") . "/" . date("m"));
 
         if (!is_dir($targetPath)) {
-            mkdir($targetPath, 0777, true);
+            mkdir($targetPath, 0755, true);
         }
 
-        $targetFileName = $targetPath . "/" . $this->generateRandomName();
+        $targetName = $randomFileName ? $this->generateRandomName() : $this->name;
 
-        if (is_resource($this->_tempResource)) {
-            return @fclose($this->_tempResource);
+        $targetFullName = $this->changeFileNameIfExist($targetPath, $targetName);
+
+        return move_uploaded_file($this->tempName, $targetFullName);
+    }
+
+    private function changeFileNameIfExist(string $path, string $filename): string
+    {
+        $fullPath = $path . "/" . $filename;
+
+        if (file_exists($fullPath)) {
+            $filename = pathinfo($filename, PATHINFO_FILENAME) . uniqid() . "." . pathinfo($filename, PATHINFO_EXTENSION);
+
+            $fullPath = $this->changeFileNameIfExist($path, $filename);
         }
 
-        return move_uploaded_file($this->tempName, $targetFileName);
+        return $fullPath;
     }
 
     private function generateRandomName(): string
